@@ -179,8 +179,8 @@ async function startScanner() {
       target: document.querySelector("#reader"),
       constraints: {
         facingMode: "environment",
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
+        width: { ideal: 300 },
+        height: { ideal: 200 }
       }
     },
     decoder: {
