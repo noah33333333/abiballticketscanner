@@ -1,5 +1,5 @@
 // Passwort hier ändern
-const PASSWORD = "ferrabi";
+const PASSWORD = "ferrabi26";
 
 let tickets = [];
 let scannedCodes = new Set();
