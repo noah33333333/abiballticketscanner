@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticket Scanner</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <section id="loginScreen" class="card">
+      <h1>Ticket Scanner</h1>
+      <p>Passwort eingeben, um den Scanner zu starten.</p>
+      <input id="passwordInput" type="password" placeholder="Passwort" autocomplete="current-password" />
+      <button id="loginBtn">Einloggen</button>
+      <p id="loginError" class="error"></p>
+    </section>
+
+    <section id="scannerScreen" class="hidden">
+      <header class="topbar">
+        <div>
+          <h1>Ticket Scanner</h1>
+          <p id="ticketCounter">Tickets geladen: 0</p>
+        </div>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </header>
+
+      <section class="card">
+        <h2>Excel-Ticketliste laden</h2>
+        <p>Lade deine Excel-Datei hoch. Erwartet: <code>Spalte A = Vorname Nachname</code>, <code>Spalte B = egal</code>, <code>Spalte C = Ticket-ID</code>. Der Barcode muss nur die Ticket-ID enthalten.</p>
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.json,application/json" />
+        <p class="hint">Der erzeugte Ticketstand wird lokal auf diesem Handy gespeichert.</p>
+      </section>
+
+      <section class="card">
+        <h2>Scanner</h2>
+        <div id="reader"></div>
+        <div class="buttons">
+          <button id="startBtn">Kamera starten</button>
+          <button id="stopBtn" class="secondary">Stoppen</button>
+        </div>
+      </section>
+
+      <section id="resultBox" class="result neutral">
+        <h2 id="resultTitle">Noch kein Scan</h2>
+        <p id="resultText">Scanne ein Ticket.</p>
+      </section>
+
+      <section class="card stats">
+        <div><strong id="validCount">0</strong><span>gültig gescannt</span></div>
+        <div><strong id="duplicateCount">0</strong><span>doppelt</span></div>
+        <div><strong id="invalidCount">0</strong><span>ungültig</span></div>
+      </section>
+
+      <section class="card">
+        <h2>Manuell eingeben</h2>
+        <div class="manual">
+          <input id="manualInput" type="text" placeholder="Ticket-ID" />
+          <button id="manualBtn">Prüfen</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Export</h2>
+        <p>Exportiert den aktuellen Scanstand als JSON-Datei.</p>
+        <button id="exportBtn">Scan-Ergebnisse exportieren</button>
+        <button id="resetBtn" class="danger">Lokalen Scanstand löschen</button>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
