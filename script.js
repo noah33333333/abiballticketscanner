@@ -16,7 +16,6 @@ const passwordInput = document.getElementById("passwordInput");
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const loginError = document.getElementById("loginError");
-const fileInput = document.getElementById("fileInput");
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const exportBtn = document.getElementById("exportBtn");
@@ -280,16 +279,7 @@ async function importFile(file) {
   showResult("Liste geladen", `${tickets.length} Tickets bereit.`, "good");
 }
 
-fileInput.addEventListener("change", async event => {
-  const file = event.target.files[0];
-  if (!file) return;
-  try {
-    await importFile(file);
-  } catch (e) {
-    console.error(e);
-    showResult("Dateifehler", "Die Datei konnte nicht gelesen werden. Prüfe: Spalte A = Name, Spalte C = ID.", "bad");
-  }
-});
+
 
 loginBtn.addEventListener("click", login);
 passwordInput.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
