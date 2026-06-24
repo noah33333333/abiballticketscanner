@@ -23,6 +23,45 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
+.scan-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 420px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #111;
+  color: white;
+  text-align: center;
+  font-size: 18px;
+  z-index: 9999;
+  box-shadow: 0 12px 35px rgba(0,0,0,.35);
+}
+
+.scan-toast.good {
+  background: #0b7a2a;
+}
+
+.scan-toast.warning {
+  background: #b36b00;
+}
+
+.scan-toast.bad {
+  background: #9b111e;
+}
+
+.scan-toast.hidden {
+  display: none;
+}
+
+#scanToastTitle {
+  font-weight: 800;
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
 .hidden {
   display: none;
 }
