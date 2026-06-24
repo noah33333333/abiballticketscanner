@@ -7,6 +7,7 @@ let scanLog = [];
 let html5QrCode = null;
 let lastScan = "";
 let lastScanTime = 0;
+let toastTimeout = null;
 
 const STORAGE_KEY = "ticketScannerFakeBackendV3_idOnly";
 
@@ -139,11 +140,29 @@ function handleScan(rawCode) {
   saveState();
 }
 
+
+
+function showToast(title, text, type) {
+  const toast = document.getElementById("scanToast");
+  document.getElementById("scanToastTitle").textContent = title;
+  document.getElementById("scanToastText").textContent = text;
+
+  toast.className = `scan-toast ${type}`;
+
+  if (toastTimeout) clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2200);
+}
+
 function showResult(title, text, type) {
   const box = document.getElementById("resultBox");
   document.getElementById("resultTitle").textContent = title;
   document.getElementById("resultText").textContent = text;
   box.className = `result ${type}`;
+
+  showToast(title, text, type);
 }
 
 function updateCounter() {
@@ -208,8 +227,8 @@ async function startScanner() {
       target: document.querySelector("#reader"),
       constraints: {
         facingMode: "environment",
-        width: { ideal: 300 },
-        height: { ideal: 200 }
+        width: { ideal: 320 },
+        height: { ideal: 120 }
       }
     },
     decoder: {
