@@ -216,43 +216,36 @@ async function loadTicketsFromRepo() {
 
 async function startScanner() {
   if (!tickets.length) {
-    showResult("Ticketliste fehlt", "Bitte zuerst Excel-Datei hochladen.", "warning");
+    showResult("Ticketliste fehlt", "Bitte zuerst Excel-Datei laden.", "warning");
     return;
   }
 
-  Quagga.init({
-    inputStream: {
-      name: "Live",
-      type: "LiveStream",
-      target: document.querySelector("#reader"),
-      constraints: {
-        facingMode: "environment",
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    },
-    decoder: {
-      readers: ["code_128_reader"]
-    },
-    locate: true
-  }, function(err) {
-    if (err) {
-      console.error(err);
-      showResult("Scanner-Fehler", "Barcode-Scanner konnte nicht gestartet werden.", "bad");
-      return;
-    }
-    Quagga.start();
-  });
+  try {
+    if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
 
-  Quagga.onDetected(function(result) {
-    const code = result.codeResult.code;
-    handleScan(code);
-  });
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      {
+        fps: 15,
+        qrbox: { width: 340, height: 160 },
+        aspectRatio: 1.7777778,
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.CODE_128
+        ]
+      },
+      decodedText => handleScan(decodedText),
+      () => {}
+    );
+  } catch (err) {
+    showResult("Kamera-Fehler", "Scanner konnte nicht gestartet werden.", "bad");
+    console.error(err);
+  }
 }
 
 async function stopScanner() {
+  if (!html5QrCode) return;
   try {
-    Quagga.stop();
+    await html5QrCode.stop();
   } catch (e) {
     console.warn(e);
   }
