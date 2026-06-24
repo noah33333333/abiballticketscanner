@@ -23,6 +23,7 @@ const exportBtn = document.getElementById("exportBtn");
 const resetBtn = document.getElementById("resetBtn");
 const manualInput = document.getElementById("manualInput");
 const manualBtn = document.getElementById("manualBtn");
+const TICKET_FILE = "tickets.xlsx";
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ tickets, scannedCodes: Array.from(scannedCodes), scanLog }));
@@ -166,6 +167,35 @@ function login() {
   }
 }
 
+async function loadTicketsFromRepo() {
+  try {
+    const response = await fetch(TICKET_FILE + "?v=" + Date.now());
+    if (!response.ok) throw new Error("Datei nicht gefunden");
+
+    const buffer = await response.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(firstSheet, {
+      header: 1,
+      defval: "",
+      raw: false
+    });
+
+    tickets = rowsToTickets(rows);
+    scannedCodes = new Set(tickets.filter(t => t.scanned).map(t => normalizeId(t.id || t.code)));
+    scanLog = [];
+
+    updateCounter();
+    updateStats();
+    saveState();
+
+    showResult("Liste geladen", `${tickets.length} Tickets aus GitHub geladen.`, "good");
+  } catch (e) {
+    console.error(e);
+    showResult("Fehler", "tickets.xlsx konnte nicht geladen werden.", "bad");
+  }
+}
+
 async function startScanner() {
   if (!tickets.length) {
     showResult("Ticketliste fehlt", "Bitte zuerst Excel-Datei hochladen.", "warning");
@@ -286,3 +316,4 @@ resetBtn.addEventListener("click", () => {
 });
 
 loadState();
+loadTicketsFromRepo();
