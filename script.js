@@ -1,5 +1,5 @@
 // Passwort hier ändern
-const PASSWORD = "abi2026";
+const PASSWORD = "ferrabi";
 
 let tickets = [];
 let scannedCodes = new Set();
@@ -172,31 +172,42 @@ async function startScanner() {
     return;
   }
 
-  try {
-    if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 350, height: 120 }, formatsToSupport: [
-    Html5QrcodeSupportedFormats.CODE_128,
-    Html5QrcodeSupportedFormats.CODE_39,
-    Html5QrcodeSupportedFormats.EAN_13,
-    Html5QrcodeSupportedFormats.EAN_8,
-    Html5QrcodeSupportedFormats.UPC_A,
-    Html5QrcodeSupportedFormats.UPC_E,
-    Html5QrcodeSupportedFormats.QR_CODE
-  ] },
-      decodedText => handleScan(decodedText),
-      () => {}
-    );
-  } catch (err) {
-    showResult("Kamera-Fehler", "Kamera konnte nicht gestartet werden. GitHub Pages muss über HTTPS geöffnet sein.", "bad");
-    console.error(err);
-  }
+  Quagga.init({
+    inputStream: {
+      name: "Live",
+      type: "LiveStream",
+      target: document.querySelector("#reader"),
+      constraints: {
+        facingMode: "environment",
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    },
+    decoder: {
+      readers: ["code_128_reader"]
+    },
+    locate: true
+  }, function(err) {
+    if (err) {
+      console.error(err);
+      showResult("Scanner-Fehler", "Barcode-Scanner konnte nicht gestartet werden.", "bad");
+      return;
+    }
+    Quagga.start();
+  });
+
+  Quagga.onDetected(function(result) {
+    const code = result.codeResult.code;
+    handleScan(code);
+  });
 }
 
 async function stopScanner() {
-  if (!html5QrCode) return;
-  try { await html5QrCode.stop(); } catch (e) { console.warn(e); }
+  try {
+    Quagga.stop();
+  } catch (e) {
+    console.warn(e);
+  }
 }
 
 function exportResults() {
